@@ -1,5 +1,6 @@
 # Django + React Notes App
 
+<<<<<<< HEAD
 A full-stack notes application built with Django REST Framework on the backend and React + Vite on the frontend. The app allows users to register, log in securely with JWT authentication, and manage their personal notes.
 
 ## Features
@@ -11,10 +12,30 @@ A full-stack notes application built with Django REST Framework on the backend a
 - Responsive and modern dashboard UI
 - Dark glassmorphism-inspired design
 - API integration between frontend and backend
+=======
+A full-stack notes application built with Django REST Framework on the backend and React (Vite) on the frontend. The app allows users to register, log in securely with JWT authentication, and manage their personal notes.
+
+## Live Demo
+[Click here to view the live application](https://notes-app-frontend-bm2k.onrender.com)
+
+**Important Note:** Because this app is hosted on Render's free tier, the backend server might take 30-50 seconds to wake up on the first request. Please be patient if the initial load is slow.
+
+## Features
+
+- User registration and secure authentication.
+- JWT-based login (Access and Refresh tokens).
+- Protected routes for authenticated users only.
+- Create, view, and delete personal notes.
+- Responsive and modern dashboard UI.
+- Dark glassmorphism-inspired design.
+- Toast notifications for a smooth user experience.
+- Full API integration between frontend and backend.
+>>>>>>> b7572688a4e14e285c0d125dc0abbecd438e475b
 
 ## Tech Stack
 
 ### Backend
+<<<<<<< HEAD
 - Python
 - Django
 - Django REST Framework
@@ -27,6 +48,23 @@ A full-stack notes application built with Django REST Framework on the backend a
 - React Router
 - Axios
 - Modern CSS styling
+=======
+- Python / Django
+- Django REST Framework (DRF)
+- djangorestframework-simplejwt (for authentication)
+- PostgreSQL (Production Database) / SQLite (Local Development)
+- Gunicorn (WSGI Server) and WhiteNoise (Static Files)
+
+### Frontend
+- React.js (Vite)
+- React Router DOM
+- Axios (for API requests)
+- Tailwind CSS (for styling)
+
+### Deployment and DevOps
+- Render (Web Service, Static Site, PostgreSQL Database)
+- GitHub (Version Control)
+>>>>>>> b7572688a4e14e285c0d125dc0abbecd438e475b
 
 ## Project Structure
 
@@ -35,7 +73,10 @@ Django-React/
 ├── backend/
 │   ├── api/
 │   ├── backend/
+<<<<<<< HEAD
 │   ├── db.sqlite3
+=======
+>>>>>>> b7572688a4e14e285c0d125dc0abbecd438e475b
 │   ├── manage.py
 │   ├── requirements.txt
 │   └── build.sh
@@ -47,6 +88,7 @@ Django-React/
 │   ├── vite.config.js
 │   └── .env.example
 └── README.md
+<<<<<<< HEAD
 ```
 
 ## Screens and Pages
@@ -158,3 +200,5 @@ This project is open for learning and personal use.
 ## Author
 
 Built as a full-stack Django + React project for note management and secure authentication.
+=======
+>>>>>>> b7572688a4e14e285c0d125dc0abbecd438e475b
