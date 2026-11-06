@@ -83,8 +83,8 @@ function Home() {
         <div className="fixed right-5 top-5 z-50">
           <div
             className={`rounded-2xl border px-4 py-3 text-sm font-medium shadow-2xl backdrop-blur-md ${toast.type === 'success'
-                ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-50'
-                : 'border-red-400/40 bg-red-500/15 text-red-50'
+              ? 'border-emerald-400/40 bg-emerald-500/15 text-emerald-50'
+              : 'border-red-400/40 bg-red-500/15 text-red-50'
               }`}
           >
             {toast.message}

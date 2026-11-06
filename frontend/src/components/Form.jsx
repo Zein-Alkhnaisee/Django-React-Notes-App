@@ -7,14 +7,66 @@ function Form({ route, method }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [fieldErrors, setFieldErrors] = useState({ username: "", password: "" });
+    const [generalError, setGeneralError] = useState("");
     const navigate = useNavigate();
 
     const isLogin = method === "login";
     const name = isLogin ? "Login" : "Register";
     const redirectPath = isLogin ? "/register" : "/login";
 
+    const validateUsername = (value) => {
+        if (value.trim() !== value || value.includes(" ")) {
+            return "اسم المستخدم لا يمكن أن يحتوي على فراغات.";
+        }
+        return "";
+    };
+
+    const getFieldErrorMessage = (field, value) => {
+        if (field === "username") {
+            return validateUsername(value);
+        }
+
+        if (field === "password" && !value.trim()) {
+            return "كلمة المرور مطلوبة.";
+        }
+
+        return "";
+    };
+
+    const handleChange = (field, value) => {
+        if (field === "username") {
+            setUsername(value);
+            setFieldErrors((prev) => ({
+                ...prev,
+                username: getFieldErrorMessage("username", value),
+            }));
+            return;
+        }
+
+        setPassword(value);
+        setFieldErrors((prev) => ({
+            ...prev,
+            password: getFieldErrorMessage("password", value),
+        }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setGeneralError("");
+
+        const usernameError = validateUsername(username);
+        const passwordError = getFieldErrorMessage("password", password);
+        const nextErrors = {
+            username: usernameError,
+            password: passwordError,
+        };
+        setFieldErrors(nextErrors);
+
+        if (usernameError || passwordError) {
+            return;
+        }
+
         setLoading(true);
 
         try {
@@ -38,20 +90,37 @@ function Form({ route, method }) {
             console.error("Error during form submission:", error.response?.data || error.message);
 
             const errorData = error.response?.data;
-            let errorMsg = "Something went wrong. Please try again.";
+            let errorMsg = "حدث خطأ، حاول مرة أخرى.";
 
             if (errorData) {
                 if (typeof errorData === 'string') {
                     errorMsg = errorData;
                 } else if (typeof errorData === 'object') {
-                    const messages = Object.values(errorData).flatMap((value) =>
-                        Array.isArray(value) ? value : [value]
-                    );
-                    errorMsg = messages.filter(Boolean).join(' ');
+                    const fieldKeys = Object.keys(errorData);
+
+                    const messages = Object.entries(errorData).flatMap(([key, value]) => {
+                        const message = Array.isArray(value) ? value[0] : value;
+
+                        if (key === 'username' || key === 'password') {
+                            setFieldErrors((prev) => ({ ...prev, [key]: message }));
+                        }
+
+                        return [message];
+                    });
+
+                    if (messages.length > 0) {
+                        errorMsg = messages.join(' ');
+                    }
+
+                    if (fieldKeys.length > 0 && !fieldKeys.some((key) => key === 'username' || key === 'password')) {
+                        setGeneralError(errorMsg);
+                    }
                 }
             }
 
-            window.alert(errorMsg);
+            if (!fieldErrors.username && !fieldErrors.password) {
+                setGeneralError(errorMsg);
+            }
         } finally {
             setLoading(false);
         }
@@ -84,19 +153,31 @@ function Form({ route, method }) {
                         </div>
 
                         <form onSubmit={handleSubmit} className="space-y-5">
+                            {generalError && (
+                                <div className="rounded-2xl border border-red-500/40 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                                    {generalError}
+                                </div>
+                            )}
+
                             <div className="space-y-2">
                                 <label htmlFor="username" className="block text-sm font-medium text-slate-200">
                                     Username
                                 </label>
                                 <input
-                                    className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+                                    className={`w-full rounded-2xl border px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:ring-2 ${fieldErrors.username
+                                        ? "border-red-500 bg-red-500/5 focus:border-red-400 focus:ring-red-500/30"
+                                        : "border-white/10 bg-slate-900/60 focus:border-violet-400 focus:ring-violet-500/30"}`}
                                     type="text"
                                     id="username"
                                     value={username}
-                                    onChange={(e) => setUsername(e.target.value)}
+                                    onChange={(e) => handleChange("username", e.target.value)}
                                     placeholder="Enter your username"
                                     required
+                                    aria-invalid={Boolean(fieldErrors.username)}
                                 />
+                                {fieldErrors.username && (
+                                    <p className="text-sm text-red-400">{fieldErrors.username}</p>
+                                )}
                             </div>
 
                             <div className="space-y-2">
@@ -104,14 +185,20 @@ function Form({ route, method }) {
                                     Password
                                 </label>
                                 <input
-                                    className="w-full rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:border-violet-400 focus:ring-2 focus:ring-violet-500/30"
+                                    className={`w-full rounded-2xl border px-4 py-3 text-white placeholder:text-slate-400 outline-none transition focus:ring-2 ${fieldErrors.password
+                                        ? "border-red-500 bg-red-500/5 focus:border-red-400 focus:ring-red-500/30"
+                                        : "border-white/10 bg-slate-900/60 focus:border-violet-400 focus:ring-violet-500/30"}`}
                                     type="password"
                                     id="password"
                                     value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    onChange={(e) => handleChange("password", e.target.value)}
                                     placeholder="Enter your password"
                                     required
+                                    aria-invalid={Boolean(fieldErrors.password)}
                                 />
+                                {fieldErrors.password && (
+                                    <p className="text-sm text-red-400">{fieldErrors.password}</p>
+                                )}
                             </div>
 
                             <button
