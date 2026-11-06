@@ -1,7 +1,9 @@
 import api from '../api'
 import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 function Home() {
+  const navigate = useNavigate()
   const [notes, setNotes] = useState([])
   const [content, setContent] = useState('')
   const [title, setTitle] = useState('')
@@ -97,9 +99,19 @@ function Home() {
             <h1 className="mt-2 text-3xl font-bold text-white">My Notes</h1>
           </div>
 
-          <div className="flex items-center gap-3 rounded-2xl border border-violet-400/30 bg-violet-500/10 px-4 py-2">
-            <div className="h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
-            <span className="text-sm text-violet-100">{notes.length} Notes</span>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 rounded-2xl border border-violet-400/30 bg-violet-500/10 px-4 py-2">
+              <div className="h-3 w-3 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(74,222,128,0.9)]" />
+              <span className="text-sm text-violet-100">{notes.length} Notes</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => navigate('/logout')}
+              className="rounded-2xl border border-red-400/40 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-200 transition hover:bg-red-500/20"
+            >
+              Logout
+            </button>
           </div>
         </header>
 

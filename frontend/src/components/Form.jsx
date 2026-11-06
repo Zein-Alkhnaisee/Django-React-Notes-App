@@ -18,26 +18,40 @@ function Form({ route, method }) {
         setLoading(true);
 
         try {
-            const response = await api.post(route, { username, password });
-            const { access, refresh } = response.data;
             if (isLogin) {
+                const response = await api.post(route, { username, password });
+                const { access, refresh } = response.data;
                 localStorage.setItem(ACCESS_TOKEN, access);
                 localStorage.setItem(REFRESH_TOKEN, refresh);
                 navigate("/");
-            } else {
-                navigate("/login");
+                return;
             }
+
+            await api.post(route, { username, password });
+
+            const tokenResponse = await api.post('/api/token/', { username, password });
+            const { access, refresh } = tokenResponse.data;
+            localStorage.setItem(ACCESS_TOKEN, access);
+            localStorage.setItem(REFRESH_TOKEN, refresh);
+            navigate("/");
         } catch (error) {
             console.error("Error during form submission:", error.response?.data || error.message);
 
             const errorData = error.response?.data;
-            let errorMsg = "An error occurred.";
+            let errorMsg = "Something went wrong. Please try again.";
 
             if (errorData) {
-                errorMsg = JSON.stringify(errorData);
+                if (typeof errorData === 'string') {
+                    errorMsg = errorData;
+                } else if (typeof errorData === 'object') {
+                    const messages = Object.values(errorData).flatMap((value) =>
+                        Array.isArray(value) ? value : [value]
+                    );
+                    errorMsg = messages.filter(Boolean).join(' ');
+                }
             }
 
-            alert(`Error: ${errorMsg}`);
+            window.alert(errorMsg);
         } finally {
             setLoading(false);
         }
